@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dehleez Arts Fest Results</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+
+    <header class="bg-indigo-950 text-white shadow-md">
+        <div class="max-w-6xl mx-auto px-4 py-8 text-center">
+            <h1 class="text-3xl font-extrabold tracking-tight sm:text-4xl">DEHLEEZ ARTS FEST</h1>
+            <p class="text-indigo-200 mt-2 text-sm sm:text-base font-medium tracking-wide">🏆 LIVE POINTS TABLE & RESULTS 🏆</p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        
+        <section class="mb-12">
+            <div class="flex items-center justify-between border-b border-gray-200 pb-3 mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Overall Standings</h2>
+                <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full animate-pulse">Live Updates</span>
+            </div>
+            
+            <div class="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-100">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 text-xs uppercase font-semibold tracking-wider">
+                            <th class="px-6 py-4">Rank</th>
+                            <th class="px-6 py-4">Batch</th>
+                            <th class="px-6 py-4">Onstage Points</th>
+                            <th class="px-6 py-4">Offstage Points</th>
+                            <th class="px-6 py-4 text-right">Total Points</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body" class="divide-y divide-gray-100 text-sm">
+                        <tr>
+                            <td colspan="5" class="px-6 py-12 text-center text-gray-400 font-medium">Connecting to live standings...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section>
+            <div class="border-b border-gray-200 pb-3 mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Event-wise Results</h2>
+            </div>
+            
+            <div class="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-100">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 text-xs uppercase font-semibold tracking-wider">
+                            <th class="px-6 py-4">Event Name</th>
+                            <th class="px-6 py-4">Category</th>
+                            <th class="px-6 py-4">Position</th>
+                            <th class="px-6 py-4">Winner</th>
+                            <th class="px-6 py-4">Batch</th>
+                            <th class="px-6 py-4 text-right">Points Gained</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body" class="divide-y divide-gray-100 text-sm">
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-400 font-medium">Connecting to live event results...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-8 text-xs text-gray-400 bg-gray-100 mt-16 border-t border-gray-200">
+        <p>&copy; Dehleez Arts Fest. Automatically synced via Google Sheets & DuckDNS.</p>
+    </footer>
+
+    <script>
+        // ⚠️ PASTE YOUR COPIED "PUBLISH TO WEB" CSV LINKS HERE:
+        const LEADERBOARD_CSV_URL = 'PASTE_YOUR_OVERALL_STANDINGS_CSV_URL_HERE';
+        const RESULTS_CSV_URL     = 'PASTE_YOUR_EVENT_RESULTS_CSV_URL_HERE';
+
+        // Process and Render the "overall_standings" Tab
+        function loadLeaderboard() {
+            Papa.parse(LEADERBOARD_CSV_URL, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    const data = results.data;
+                    const tbody = document.getElementById('leaderboard-body');
+                    tbody.innerHTML = ''; 
+
+                    // Loop through data and automatically append sequential # ranks
+                    data.forEach((row, index) => {
+                        const tr = document.createElement('tr');
+                        tr.className = 'hover:bg-gray-50/70 transition-colors';
+                        
+                        let rankDesign = `#${index + 1}`;
+                        if (index === 0) rankDesign = `<span class="bg-amber-50 text-amber-700 px-2 py-1 rounded font-bold border border-amber-200">🥇 #1</span>`;
+                        else if (index === 1) rankDesign = `<span class="bg-slate-50 text-slate-700 px-2 py-1 rounded font-bold border border-slate-200">🥈 #2</span>`;
+                        else if (index === 2) rankDesign = `<span class="bg-orange-50 text-orange-700 px-2 py-1 rounded font-bold border border-orange-200">🥉 #3</span>`;
+
+                        tr.innerHTML = `
+                            <td class="px-6 py-4 font-semibold text-gray-700">${rankDesign}</td>
+                            <td class="px-6 py-4 font-bold text-gray-900">${row['Batch'] || '-'}</td>
+                            <td class="px-6 py-4 text-gray-600 font-medium">${row['Onstage Points'] || '0'}</td>
+                            <td class="px-6 py-4 text-gray-600 font-medium">${row['Offstage Points'] || '0'}</td>
+                            <td class="px-6 py-4 text-right font-extrabold text-indigo-600 text-base">${row['Total Points'] || '0'}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                },
+                error: function() {
+                    document.getElementById('leaderboard-body').innerHTML = 
+                        `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500 font-medium">⚠️ Error connecting to overall standings database. Check your URL configurations.</td></tr>`;
+                }
+            });
+        }
+
+        // Process and Render the "event_results" Tab
+        function loadResults() {
+            Papa.parse(RESULTS_CSV_URL, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    const data = results.data;
+                    const tbody = document.getElementById('results-body');
+                    tbody.innerHTML = ''; 
+
+                    data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.className = 'hover:bg-gray-50/70 transition-colors';
+                        
+                        let positionBadge = row['Position'] || '-';
+                        if (positionBadge.toLowerCase().includes('1st')) positionBadge = `<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold text-xs border border-amber-200">🥇 1st</span>`;
+                        else if (positionBadge.toLowerCase().includes('2nd')) positionBadge = `<span class="bg-slate-100 text-slate-800 px-2 py-0.5 rounded font-bold text-xs border border-slate-200">🥈 2nd</span>`;
+                        else if (positionBadge.toLowerCase().includes('3rd')) positionBadge = `<span class="bg-orange-100 text-orange-800 px-2 py-0.5 rounded font-bold text-xs border border-orange-200">🥉 3rd</span>`;
+
+                        tr.innerHTML = `
+                            <td class="px-6 py-4 font-semibold text-gray-900">${row['Event'] || '-'}</td>
+                            <td class="px-6 py-4 text-gray-500 text-xs font-medium">${row['Category'] || '-'}</td>
+                            <td class="px-6 py-4">${positionBadge}</td>
+                            <td class="px-6 py-4 font-bold text-gray-800">${row['Winner Name'] || '-'}</td>
+                            <td class="px-6 py-4 text-gray-600 font-medium">${row['Batch'] || '-'}</td>
+                            <td class="px-6 py-4 text-right font-extrabold text-emerald-600 text-sm">+${row['Points'] || '0'}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                },
+                error: function() {
+                    document.getElementById('results-body').innerHTML = 
+                        `<tr><td colspan="6" class="px-6 py-8 text-center text-red-500 font-medium">⚠️ Error connecting to event results database. Check your URL configurations.</td></tr>`;
+                }
+            });
+        }
+
+        // Initialize fetches when window tree finishes DOM initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            loadLeaderboard();
+            loadResults();
+        });
+    </script>
+</body>
+</html>
