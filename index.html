@@ -79,15 +79,29 @@
             margin-top: 15px;
         }
 
-        th, td {
+       th, td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid var(--glass-border);
         }
 
         th {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(20, 20, 20, 0.9);
             font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            backdrop-filter: blur(5px);
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.08); 
+            transition: background 0.3s ease;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            width: 100%;
         }
 
         input[type="text"] {
@@ -156,6 +170,7 @@
     <div class="container">
         <div class="glass-panel">
             <h2>🏆 Leaderboard</h2>
+            <div class="table-container">
             <table>
                 <thead>
                     <tr>
@@ -173,6 +188,7 @@
         <div class="glass-panel">
             <h2>🎭 Event Status</h2>
             <input type="text" id="searchBar" placeholder="🔍 Search for an event...">
+            <div class="table-container">
             <table>
                 <thead>
                     <tr>
@@ -227,13 +243,13 @@
 
 <script>
     // --- IMPORTANT: REPLACE THESE WITH YOUR PUBLISHED CSV LINKS ---
-    const LEADERBOARD_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSmaNQYJnBBRNVmhOLiI1eWDCQZiO12NAfBBO0IBQffwsTnS86ClvXYAHfAsnOZY7EAH-vzJTW7wRfu/pub?gid=0&single=true&output=csv';
-    const EVENTS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSmaNQYJnBBRNVmhOLiI1eWDCQZiO12NAfBBO0IBQffwsTnS86ClvXYAHfAsnOZY7EAH-vzJTW7wRfu/pub?gid=588512192&single=true&output=csv';
+    const LEADERBOARD_CSV = 'https://docs.google.com/spreadsheets/d/1-IbAuhX1YVOkQyDKdUh204Bt3Hur3LRWyp66Zq21ooE/export?format=csv&gid=0';
+    const EVENTS_CSV = 'https://docs.google.com/spreadsheets/d/1-IbAuhX1YVOkQyDKdUh204Bt3Hur3LRWyp66Zq21ooE/export?format=csv&gid=588512192';
 
     let allEventsData = [];
 
     // Fetch and render Leaderboard
-    Papa.parse(LEADERBOARD_CSV, {
+   Papa.parse(LEADERBOARD_CSV + '&t=' + new Date().getTime(), {
         download: true,
         header: true,
         complete: function(results) {
@@ -247,10 +263,14 @@
 
             data.forEach((row, index) => {
                 let tr = document.createElement('tr');
+                
+                let rankDisplay = index === 0 ? '👑 1' : index + 1;
+                let rowStyle = index === 0 ? 'color: #ffeb3b; font-size: 1.1rem;' : '';
+
                 tr.innerHTML = `
-                    <td><b>${index + 1}</b></td>
-                    <td>${row.Batch}</td>
-                    <td><b>${row.Score}</b></td>
+                    <td style="${rowStyle}"><b>${rankDisplay}</b></td>
+                    <td style="${rowStyle}">${row['Batch Name'] || row.Batch}</td>
+                    <td style="${rowStyle}"><b>${row.Score}</b></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -258,7 +278,7 @@
     });
 
     // Fetch and render Events
-    Papa.parse(EVENTS_CSV, {
+    Papa.parse(EVENTS_CSV + '&t=' + new Date().getTime(), {
         download: true,
         header: true,
         complete: function(results) {
@@ -312,8 +332,53 @@
         let filteredData = allEventsData.filter(row => 
             row['Event Name'].toLowerCase().includes(searchTerm)
         );
-        renderEvents(filteredData);
+       renderEvents(filteredData);
     });
+
+    // Refresh the data every 60 seconds
+    setInterval(() => {
+        Papa.parse(LEADERBOARD_CSV + '&t=' + new Date().getTime(), {
+            download: true,
+            header: true,
+            complete: function(results) {
+                let data = results.data.filter(row => (row['Batch Name'] || row.Batch) && row.Score);
+                data.sort((a, b) => parseInt(b.Score) - parseInt(a.Score));
+                
+                const tbody = document.getElementById('leaderboard-body');
+                tbody.innerHTML = '';
+                
+                data.forEach((row, index) => {
+                    let rankDisplay = index === 0 ? '👑 1' : index + 1;
+                    let rowStyle = index === 0 ? 'color: #ffeb3b; font-size: 1.1rem;' : '';
+                    let tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="${rowStyle}"><b>${rankDisplay}</b></td>
+                        <td style="${rowStyle}">${row['Batch Name'] || row.Batch}</td>
+                        <td style="${rowStyle}"><b>${row.Score}</b></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        });
+
+        Papa.parse(EVENTS_CSV + '&t=' + new Date().getTime(), {
+            download: true,
+            header: true,
+            complete: function(results) {
+                allEventsData = results.data.filter(row => row['Event Name']);
+                let searchTerm = document.getElementById('searchBar').value.toLowerCase();
+                if (searchTerm) {
+                    let filteredData = allEventsData.filter(row => 
+                        row['Event Name'].toLowerCase().includes(searchTerm)
+                    );
+                    renderEvents(filteredData);
+                } else {
+                    renderEvents(allEventsData);
+                }
+            }
+        });
+    }, 60000); 
+
 </script>
 
 </body>
