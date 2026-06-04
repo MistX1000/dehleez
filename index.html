@@ -178,9 +178,10 @@
 
         .contact-card h4 { margin: 0 0 5px 0; color: #ffeb3b; }
         .contact-card p { margin: 0; font-size: 0.9rem; color: #ccc; }
-        /* Scoring Rules Accordion */
+      /* Scoring Rules Accordion */
         .scoring-rules {
-            margin-top: 20px;
+            margin-top: 10px;
+            margin-bottom: 25px; /* Creates clean separation from the table below */
             background: rgba(0, 0, 0, 0.3);
             border-radius: 8px;
             padding: 12px;
@@ -248,9 +249,26 @@
     <h1>DEHLEEZ 2026 SCOREBOARD</h1>
 
     <div class="container">
-        <div class="glass-panel">
-            <h2>🏆 Leaderboard</h2>
-            <div class="table-container">
+    
+    <div class="glass-panel">
+        <h2>🏆 Leaderboard</h2>
+
+        <details class="scoring-rules">
+            <summary>ℹ️ View Evaluation & Scoring System</summary>
+            <div class="rules-content">
+                <h4>Individual Events</h4>
+                <p>🥇 1st Prize - 5 points<br>
+                   🥈 2nd Prize - 3 points<br>
+                   🥉 3rd Prize - 1 point</p>
+                
+                <h4>Group Events</h4>
+                <p>🥇 1st Prize - 10 points<br>
+                   🥈 2nd Prize - 6 points<br>
+                   🥉 3rd Prize - 2 points</p>
+            </div>
+        </details>
+
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>
@@ -264,11 +282,11 @@
                 </tbody>
             </table>
         </div>
-
-        <div class="glass-panel">
-            <h2>🎭 Event Status</h2>
-            <input type="text" id="searchBar" placeholder="🔍 Search for an event...">
-            <div class="table-container">
+    </div> <div class="glass-panel">
+        <h2>🎭 Event Status</h2>
+        <input type="text" id="searchBar" placeholder="🔍 Search for an event...">
+        
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>
@@ -280,27 +298,9 @@
                 <tbody id="events-body">
                     <tr><td colspan="3">Loading events...</td></tr>
                 </tbody>
-          </table>
-            </div>
-
-            <!-- Scoring System Accordion -->
-            <details class="scoring-rules">
-                <summary>ℹ️ View Evaluation & Scoring System</summary>
-                <div class="rules-content">
-                    <h4>Individual Events</h4>
-                    <p>🥇 1st Prize - 5 points<br>
-                       🥈 2nd Prize - 3 points<br>
-                       🥉 3rd Prize - 1 point</p>
-                    
-                    <h4>Group Events</h4>
-                    <p>🥇 1st Prize - 10 points<br>
-                       🥈 2nd Prize - 6 points<br>
-                       🥉 3rd Prize - 2 points</p>
-                </div>
-            </details>
-
+            </table>
         </div>
-
+    </div> 
         <!-- Events Section -->
 
     <footer>
