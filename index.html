@@ -178,6 +178,56 @@
 
         .contact-card h4 { margin: 0 0 5px 0; color: #ffeb3b; }
         .contact-card p { margin: 0; font-size: 0.9rem; color: #ccc; }
+        /* Scoring Rules Accordion */
+        .scoring-rules {
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .scoring-rules summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #ddd;
+            font-size: 0.95rem;
+            list-style: none; /* Hides default triangle */
+        }
+        
+        .scoring-rules summary::-webkit-details-marker {
+            display: none; /* Hides default triangle in Safari/Chrome */
+        }
+
+        .scoring-rules summary:hover {
+            color: #ffffff;
+        }
+
+        .rules-content {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+        }
+
+        .rules-content h4 {
+            margin: 0 0 8px 0;
+            color: #ffeb3b; /* Matches your header highlights */
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .rules-content p {
+            margin: 0 0 15px 0;
+            line-height: 1.6;
+            color: #ccc;
+        }
+        
+        .rules-content p:last-child {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body>
@@ -230,9 +280,28 @@
                 <tbody id="events-body">
                     <tr><td colspan="3">Loading events...</td></tr>
                 </tbody>
-            </table>
+          </table>
+            </div>
+
+            <!-- Scoring System Accordion -->
+            <details class="scoring-rules">
+                <summary>ℹ️ View Evaluation & Scoring System</summary>
+                <div class="rules-content">
+                    <h4>Individual Events</h4>
+                    <p>🥇 1st Prize - 5 points<br>
+                       🥈 2nd Prize - 3 points<br>
+                       🥉 3rd Prize - 1 point</p>
+                    
+                    <h4>Group Events</h4>
+                    <p>🥇 1st Prize - 10 points<br>
+                       🥈 2nd Prize - 6 points<br>
+                       🥉 3rd Prize - 2 points</p>
+                </div>
+            </details>
+
         </div>
-    </div>
+
+        <!-- Events Section -->
 
     <footer>
         <h3>Contact Us</h3>
